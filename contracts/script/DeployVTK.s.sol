@@ -8,7 +8,10 @@
  contract DeployVTK is Script {
      function run() external {
          vm.startBroadcast();
-         new VTK();
+         VTK vtk = new VTK();
          vm.stopBroadcast();
+
+         string memory json = vm.serializeAddress("deployments", "VTK", address(vtk));
+         vm.writeJson(json, string.concat(vm.projectRoot(), "/broadcast/deployed-addresses.json"));
      }
  }
