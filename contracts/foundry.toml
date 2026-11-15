@@ -4,7 +4,7 @@ src = "src"
 test = "test"
 out = "out"
 libs = ["lib"]
-solc_version = "0.8.33"
+solc_version = "0.8.38"
 
 fs_permissions = [
     { access = "read-write", path = "./broadcast" }
