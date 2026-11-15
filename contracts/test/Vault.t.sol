@@ -189,6 +189,38 @@ contract VaultTest is Test {
         assertEq(balance, 204.5225 ether);
     }
 
+    function test_MonthlyDepositsForOneYear() public {
+        uint256 monthlyAmount = 50 ether;
+
+        vm.deal(alice, 12 * monthlyAmount);
+
+        vm.prank(alice);
+        vtk.buyVTK{value: 12 * monthlyAmount}();
+
+        vm.prank(alice);
+        vtk.approve(address(vault), 12 * monthlyAmount);
+
+        // Deposit 50 VTK every month for 12 months.
+        for (uint256 i = 0; i < 12; i++) {
+            vm.prank(alice);
+            vault.deposit(monthlyAmount, alice);
+
+            // Move forward one month.
+            vm.warp(block.timestamp + 365 days / 12);
+        }
+
+        // Trigger interest calculation after the final month.
+        vm.prank(alice);
+        vault.deposit(0, alice);
+
+        (uint256 balance, ) = vault.accounts(alice);
+
+        console.log("Final account balance:", balance / 1 ether);
+
+        // Verify the final balance.
+        assertGt(balance, 600 ether);
+    }
+
     function test_Withdrawal() public {
         uint256 amount = 100 ether;
 
